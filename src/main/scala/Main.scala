@@ -1,12 +1,25 @@
+import scala.collection.immutable.Seq
+
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpEntity.{Chunk, ChunkStreamPart, Chunked, Strict}
 import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model._
+import akka.stream.scaladsl.Source
+import akka.util.ByteString
 
 object Main extends App {
   implicit val system = ActorSystem(Behaviors.empty, "my-system")
+  val response =
+    Source.single(Chunk((ByteString("{ "))))
+      .concat(Source.repeat(Chunk(ByteString(""" "message": "hello", """))).take(10000))
+      .concat(Source.single(Chunk(ByteString(""" "last": "field" }"""))))
   val route = get {
-    complete("Hello, world")
+    extractRequest { req =>
+//      println(req.protocol)
+      complete(Chunked(ContentTypes.`application/json`, response))
+    }
   }
   import java.io.InputStream
 import java.security.{ KeyStore, SecureRandom }

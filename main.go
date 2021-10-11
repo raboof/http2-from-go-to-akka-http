@@ -10,23 +10,21 @@ import (
 	//"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
         "k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
+	//"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/rest"
 	//"k8s.io/client-go/util/homedir"
 )
 
 func main() {
-	//var kubeconfig *string
-	//if home := homedir.HomeDir(); home != "" {
-	//	kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-	//} else {
-	//	kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	//}
-	//flag.Parse()
-	config, err := clientcmd.BuildConfigFromFlags("https://localhost:8001", "")
-	if err != nil {
-		panic(err.Error())
+	kubeConfig := rest.Config{
+		Host: "https://localhost:8001",
+		BearerToken: "asdf",
+		TLSClientConfig: rest.TLSClientConfig{
+			Insecure: true,
+		},
 	}
-	clientset, err := kubernetes.NewForConfig(config)
+
+	clientset, err := kubernetes.NewForConfig(&kubeConfig)
 	if err != nil {
 		panic(err.Error())
 	}
