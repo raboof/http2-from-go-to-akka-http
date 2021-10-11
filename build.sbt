@@ -1,6 +1,5 @@
 val AkkaVersion = "2.6.8"
-//val AkkaHttpVersion = "10.2.6"
-val AkkaHttpVersion = "10.2.3"
+val AkkaHttpVersion = "10.2.6"
 run / fork := true
 libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
