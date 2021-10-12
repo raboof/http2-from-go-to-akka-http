@@ -1,9 +1,8 @@
 import scala.collection.immutable.Seq
-
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpEntity.{Chunk, ChunkStreamPart, Chunked, Strict}
+import akka.http.scaladsl.model.HttpEntity.{Chunk, ChunkStreamPart, Chunked, LastChunk, Strict}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model._
 import akka.stream.scaladsl.Source
@@ -14,7 +13,7 @@ object Main extends App {
   val response =
     Source.single(Chunk((ByteString("{ "))))
       .concat(Source.repeat(Chunk(ByteString(""" "message": "hello", """))).take(10000))
-      .concat(Source.single(Chunk(ByteString(""" "last": "field" }"""))))
+      .concat(Source(Seq(Chunk(ByteString(""" "last": "field" }""")), LastChunk())))
   val route = get {
     extractRequest { req =>
 //      println(req.protocol)
